@@ -20,16 +20,6 @@ services:
     profiles:
       - testing
 
-  app:
-    build:
-      context: ./
-    env_file:
-      - .env
-    ports:
-      - '8080:8080'
-    depends_on:
-      - db
-
   prod-app:
     build:
       context: ./

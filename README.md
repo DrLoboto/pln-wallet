@@ -31,12 +31,12 @@ Please refer to the respective tools installation instructions in case of any er
 
 ### Startup
 
-Installed service could be started in a development docker container and in a
-production-like docker container.
+For the development docker environment must be started with `docker compose up` command.
+It will start development database container.
 
-Development start:
+Service start:
 ```console
-docker-compose up
+poetry run service
 ```
 
 API will be available as http://127.0.0.1:8080/ together with interactive documentation
@@ -51,25 +51,6 @@ This command will create auth token for user with ID `123`, write permissions an
 minutes TTL. Provide this token via "Authorize" button on interactive docs page. All
 options description is available via help: `poetry run token --help`.
 
-Start as production-like docker container:
-```console
-docker-compose --profile=deployment up
-```
-
-In this case the API will be available as http://127.0.0.1:8000/ (note port **8000**),
-interactive documentation won't be available and internal errors won't be returned in
-responses. The token issue command won't be available as well since production container
-does not posess private key.
-
-> [!IMPORTANT]
-> Both development and production containers use single database since production
-> startup is implemented as a demostration only. So changes you done via one app are
-> visible in the other.
-
-> [!TIP]
-> Both containers and a development environment expect tokens to be signed by the single
-> key, so you can issue auth token via installed code or development container and use
-> it with production API.
 
 ### Development
 
@@ -94,6 +75,26 @@ It is assumed that for non-local deployments the Docker image will be built as s
 `docker build .` and deployed to the target environment providing environment variables
 on container start. This way only default (and mostly static) settings are built inside
 an image so it can be promoted between environment after testing.
+
+Start as production-like docker container:
+```console
+docker compose --profile=deployment up
+```
+
+In this case the API will be available as http://127.0.0.1:8000/ (note port **8000**),
+interactive documentation won't be available and internal errors won't be returned in
+responses. The token issue command won't be available as well since production container
+does not posess private key.
+
+> [!IMPORTANT]
+> Both development service and production container use single database since production
+> startup is implemented as a demostration only. So changes you done locally are visible
+> in the production container and vice versa.
+
+> [!TIP]
+> Both development service and production container expect tokens to be signed by the
+> same key, so you can issue auth token via local token command and use it with the
+> production API.
 
 ## Implementation
 
