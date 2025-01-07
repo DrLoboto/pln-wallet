@@ -1,0 +1,47 @@
+services:
+
+  db:
+    image: postgres:17.2-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wallet
+    ports:
+      - '5432:5432'
+
+  test-db:
+    image: postgres:17.2-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test_wallet
+    ports:
+      - '5433:5432'
+    profiles:
+      - testing
+
+  app:
+    build:
+      context: ./
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+
+  prod-app:
+    build:
+      context: ./
+    environment:
+      WALLET_BIND_HOST: 0.0.0.0
+      WALLET_BIND_PORT: 8000
+      WALLET_DB: 'postgresql+asyncpg://postgres:postgres@db:5432/wallet'
+      WALLET_PUBLIC_KEY: 'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHiDRvw/TOzqEdJ2tTR2zv2ui5aDz5MmgRGnEgipeCnNF/oBaFVWbKdoawXEvH5yr2PosdDHX7rn0m+bgJRTcwM= ecdsa-key-20250104'
+      WALLET_SIGNING_ALGORITHM: 'ES256'
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+    profiles:
+      - deployment
