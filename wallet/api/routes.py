@@ -108,7 +108,7 @@ async def add_amount(
 async def substract_amount(
     currency: CurrencyAnnotation,
     amount: t.Annotated[
-        Decimal, Path(title="Amount to substract", gt=0, decimal_places=2)
+        Decimal, Path(title="Amount to subtract", gt=0, decimal_places=2)
     ],
     user_id: dependencies.UserIdWriteScope,
     engine: dependencies.EngineDependency,
